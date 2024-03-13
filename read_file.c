@@ -18,7 +18,6 @@ typedef struct {
 
 int encontra_tabela(Tabela *tabela, char *consulta){
     FILE *ft = fopen("table.dic", "rb");
-    long int num;
     while(getc(ft) != EOF){
         fseek(ft, -1, SEEK_CUR);
         fread(tabela, sizeof(Tabela), 1, ft);
@@ -27,49 +26,41 @@ int encontra_tabela(Tabela *tabela, char *consulta){
             return 0;
         }
     }
-    num = ftell(ft);
-    printf("Posicao: %d\n", num);
     return 1;
 };
 
-int encontra_atributos(){
-
+int encontra_atributos(Tabela tabela, Atributo atributo){
+    FILE *fe = fopen("att.dic", "rb");
+    while(getc(fe) != EOF){
+        fseek(fe, -1, SEEK_CUR);
+        fread(&atributo, sizeof(Atributo), 1, fe);
+        if(atributo.id == tabela.cod){
+            printf("id: %d\nnome: %s\ntipo: %c\nopcional: %d\ntamanho: %d\n\n", atributo.id, atributo.nome, atributo.tipo, atributo.op, atributo.tam);
+        }
+    }
+    return 0;
 }
 
 
 
 int main(){
     long int num;
-    int resultado;
+    int retorno_tab, retorno_att;
     char consulta[20];
     Tabela tabela;
+    Atributo atributo;
 
     scanf("%s", consulta);
 
-    resultado = encontra_tabela(&tabela, consulta);
+    retorno_tab = encontra_tabela(&tabela, consulta);
 
-    if(resultado){
+    if(retorno_tab){
         printf("Tabela nao encontrada!\n");
         
     } else {
-
         printf("\n****TABELA****\n\n");
         printf("id: %d\ntabela: %s\narquivo: %s\n\n\n", tabela.cod, tabela.logico, tabela.fisico);
-
-        FILE *fe = fopen("att.dic", "rb");
-        Atributo atributo;
-        while(feof(fe) == 0){
-            fread(&atributo, sizeof(Atributo), 1, fe);
-            printf("id: %d\nnome: %s\ntipo: %c\nopcional: %d\ntamanho: %d\n\n", atributo.id, atributo.nome, atributo.tipo, atributo.op, atributo.tam);
-            if(atributo.id == tabela.cod){
-                break;
-            } 
-        }
+        retorno_att = encontra_atributos(tabela, atributo);
     }
-
-
-
-    
-
     return 0;
 }
