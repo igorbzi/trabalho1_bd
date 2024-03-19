@@ -50,29 +50,41 @@ int imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
     char *string;
     int num_int;
     double num_double;
+    float num_float;
+    int z;
     FILE * fd = fopen(arquivo, "rb");
 
     while(getc(fd) != EOF){
         fseek(fd, -1, SEEK_CUR);
+        printf("|");
         for(int i=0;i<qtd_att; i++){
             switch(lista_att[i].tipo){
                 case 'C':
                     fread(&letra, sizeof(char), 1, fd);
-                    printf("%c ", letra);
+                    printf(" %*c ", 4, letra);
+                    printf("|");
                     break;
                 case 'S':
                     string = malloc(lista_att[i].tam);
                     fread(string, lista_att[i].tam, 1, fd);
-                    printf("%s ", string);
+                    printf(" %-*s ", lista_att[i].tam , string);
+                    printf("|");
                     free(string); 
                     break;
                 case 'I':
                     fread(&num_int, sizeof(int), 1, fd);
-                    printf("%d ", num_int);
+                    printf(" %-*d ", 4, num_int);
+                    printf("|");
                     break;
                 case 'D':
                     fread(&num_double, sizeof(double), 1, fd);
-                    printf("%lf ", num_double);
+                    printf(" %-*.4lf ", 8, num_double);
+                    printf("|");
+                    break;
+                case 'F':
+                    fread(&num_float, sizeof(float), 1, fd);
+                    printf(" %-*.4f ", 8, num_float);
+                    printf("|");
                     break;
             }
         }
@@ -83,12 +95,24 @@ int imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
     return 0;
 }
 
+int imprime_cabecalho(Atributo *atributos, int qtd_att){
+    printf("|");
+    for(int i=0;i<qtd_att;i++){
+        printf(" %-*s |", atributos[i].tam, atributos[i].nome);
+    }
+    // for(int i=0;i<qtd_att;i++){
+    //     printf("%s", '-' * atributos[i].tam);
+    // }
+    printf("\n");
+    return 0;
+}
+
 int main(){
     long int num;
     int retorno_tab, retorno_att;
     char consulta[20];
     Tabela tabela;
-    Atributo atributos[100];
+    Atributo atributos[15];
 
     scanf("%s", consulta);
 
@@ -110,6 +134,7 @@ int main(){
             printf("id: %d\nnome: %s\ntipo: %c\nop: %d\ntamanho: %d\n\n", atributos[i].id, atributos[i].nome, atributos[i].tipo, atributos[i].op, atributos[i].tam);
         }
 
+        imprime_cabecalho(atributos, retorno_att);
         imprime_dados(tabela.fisico, atributos, retorno_att);
 
     }
