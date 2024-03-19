@@ -51,7 +51,6 @@ int imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
     int num_int;
     double num_double;
     float num_float;
-    int z;
     FILE * fd = fopen(arquivo, "rb");
 
     while(getc(fd) != EOF){
@@ -61,19 +60,27 @@ int imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
             switch(lista_att[i].tipo){
                 case 'C':
                     fread(&letra, sizeof(char), 1, fd);
-                    printf(" %*c ", 4, letra);
+                    printf(" %*c ", (int)strlen(lista_att[i].nome), letra);
                     printf("|");
                     break;
                 case 'S':
                     string = malloc(lista_att[i].tam);
                     fread(string, lista_att[i].tam, 1, fd);
-                    printf(" %-*s ", lista_att[i].tam , string);
+                    if((int)strlen(lista_att[i].nome)>lista_att[i].tam){
+                        printf(" %-*s ", (int)strlen(lista_att[i].nome), string);
+                    } else {
+                        printf(" %-*s ", lista_att[i].tam , string);
+                    }
                     printf("|");
                     free(string); 
                     break;
                 case 'I':
                     fread(&num_int, sizeof(int), 1, fd);
-                    printf(" %-*d ", 4, num_int);
+                    if((int)strlen(lista_att[i].nome)>lista_att[i].tam){
+                        printf(" %-*d ", (int)strlen(lista_att[i].nome), num_int);
+                    } else {
+                        printf(" %-*d ", 4, num_int);
+                    }
                     printf("|");
                     break;
                 case 'D':
@@ -100,15 +107,11 @@ int imprime_cabecalho(Atributo *atributos, int qtd_att){
     for(int i=0;i<qtd_att;i++){
         printf(" %-*s |", atributos[i].tam, atributos[i].nome);
     }
-    // for(int i=0;i<qtd_att;i++){
-    //     printf("%s", '-' * atributos[i].tam);
-    // }
     printf("\n");
     return 0;
 }
 
 int main(){
-    long int num;
     int retorno_tab, retorno_att;
     char consulta[20];
     Tabela tabela;
@@ -122,17 +125,17 @@ int main(){
         printf("tabela nao encontrada!\n");
         
     } else {
-        printf("\n****TABELA****\n\n");
-        printf("id: %d\ntabela: %s\narquivo: %s\n\n\n", tabela.cod, tabela.logico, tabela.fisico);
+        //printf("\n****TABELA****\n\n");
+        //printf("id: %d\ntabela: %s\narquivo: %s\n\n\n", tabela.cod, tabela.logico, tabela.fisico);
         retorno_att = encontra_atributos(tabela, atributos);
         if(!retorno_att){
             printf("esquema nao encontrado!\n");
             return 0;
         }
         
-        for(int i=0;i<retorno_att;i++){
-            printf("id: %d\nnome: %s\ntipo: %c\nop: %d\ntamanho: %d\n\n", atributos[i].id, atributos[i].nome, atributos[i].tipo, atributos[i].op, atributos[i].tam);
-        }
+        // for(int i=0;i<retorno_att;i++){
+        //     printf("id: %d\nnome: %s\ntipo: %c\nop: %d\ntamanho: %d\n\n", atributos[i].id, atributos[i].nome, atributos[i].tipo, atributos[i].op, atributos[i].tam);
+        // }
 
         imprime_cabecalho(atributos, retorno_att);
         imprime_dados(tabela.fisico, atributos, retorno_att);
