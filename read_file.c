@@ -105,7 +105,11 @@ int imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
 int imprime_cabecalho(Atributo *atributos, int qtd_att){
     printf("|");
     for(int i=0;i<qtd_att;i++){
-        printf(" %-*s |", atributos[i].tam, atributos[i].nome);
+        if((int)strlen(atributos[i].nome)>atributos[i].tam){
+            printf(" %-*s |", (int)strlen(atributos[i].nome), atributos[i].nome);
+        } else {
+            printf(" %-*s |", atributos[i].tam, atributos[i].nome);
+        }
     }
     printf("\n");
     return 0;
@@ -115,7 +119,7 @@ int main(){
     int retorno_tab, retorno_att;
     char consulta[20];
     Tabela tabela;
-    Atributo atributos[15];
+    Atributo atributos[25];
 
     scanf("%s", consulta);
 
