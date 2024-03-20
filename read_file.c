@@ -68,11 +68,9 @@ int encontra_atributos(Tabela tabela, Atributo *atributos){
 
 void imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
     
-    char letra;
     char *string;
     int num_int;
     double num_double;
-    float num_float;
     FILE * fd = fopen(arquivo, "rb");
 
     while(getc(fd) != EOF){
@@ -82,12 +80,6 @@ void imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
 
         for(int i = 0; i < qtd_att; i++){
             switch(lista_att[i].tipo){
-
-                case 'C':
-                    fread(&letra, sizeof(char), 1, fd);
-                    printf(" %*c ", (int)strlen(lista_att[i].nome), letra);
-                    printf("|");
-                    break;
 
                 case 'S':
                     string = malloc(lista_att[i].tam);
@@ -103,26 +95,23 @@ void imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att){
 
                 case 'I':
                     fread(&num_int, sizeof(int), 1, fd);
-                    if((int)strlen(lista_att[i].nome)>lista_att[i].tam){
-                        printf(" %-*d ", (int)strlen(lista_att[i].nome), num_int);
+                    if((int)strlen(lista_att[i].nome)>10){
+                        printf(" %*d ", (int)strlen(lista_att[i].nome), num_int);
                     } else {
-                        printf(" %-*d ", 4, num_int);
+                        printf(" %*d ", 10, num_int);
                     }
                     printf("|");
                     break;
 
                 case 'D':
                     fread(&num_double, sizeof(double), 1, fd);
-                    printf(" %-*.4lf ", 8, num_double);
+                    if((int)strlen(lista_att[i].nome)>10){
+                        printf(" %*.2lf ", (int)strlen(lista_att[i].nome), num_double);
+                    } else {
+                        printf(" %*.2lf ", 10, num_double);
+                    }
                     printf("|");
                     break;
-
-                case 'F':
-                    fread(&num_float, sizeof(float), 1, fd);
-                    printf(" %-*.4f ", 8, num_float);
-                    printf("|");
-                    break;
-
             }
         }
         printf("\n");
@@ -136,11 +125,20 @@ void imprime_cabecalho(Atributo *atributos, int qtd_att){
     printf("|");
 
     for(int i = 0; i < qtd_att; i++){
-        if((int)strlen(atributos[i].nome)>atributos[i].tam){
-            printf(" %-*s |", (int)strlen(atributos[i].nome), atributos[i].nome);
+        if(atributos[i].tipo == 'S'){
+            if((int)strlen(atributos[i].nome)>atributos[i].tam){
+                printf(" %-*s |", (int)strlen(atributos[i].nome), atributos[i].nome);
+            } else {
+                printf(" %-*s |", atributos[i].tam, atributos[i].nome);
+            }
         } else {
-            printf(" %-*s |", atributos[i].tam, atributos[i].nome);
+            if((int)strlen(atributos[i].nome)>10){
+                printf(" %*s |", (int)strlen(atributos[i].nome), atributos[i].nome);
+            } else {
+                printf(" %*s |", 10, atributos[i].nome);
+            }
         }
+
     }
     printf("\n");
     return;
