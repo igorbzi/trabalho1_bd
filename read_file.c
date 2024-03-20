@@ -16,6 +16,22 @@ typedef struct Atributo{
     int tam;
 } Atributo;
 
+int encontra_tabela(Tabela *tabela, char *consulta);
+int encontra_atributos(Tabela tabela, Atributo *atributos);
+void imprime_dados(char *arquivo, Atributo *lista_att, int qtd_att);
+void imprime_cabecalho(Atributo *atributos, int qtd_att);
+int read_file(char consulta[20]);
+
+int main(int argc, char *argv[]){
+
+    if(argc>1){
+        read_file(argv[1]);
+        return 0;
+    }
+    printf("LOGICAL TABLE NAME MISSING\n");
+    return 0;
+}
+
 int encontra_tabela(Tabela *tabela, char *consulta){
 
     FILE *ft = fopen("table.dic", "rb");
@@ -154,15 +170,5 @@ int read_file(char consulta[20]){
     imprime_dados(tabela.fisico, atributos, retorno_att);
 
     
-    return 0;
-}
-
-int main(int argc, char *argv[]){
-
-    if(argc>1){
-        read_file(argv[1]);
-        return 0;
-    }
-    printf("LOGICAL TABLE NAME MISSING\n");
     return 0;
 }
